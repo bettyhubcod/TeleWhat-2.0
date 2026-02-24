@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,7 +23,7 @@ public class User {
     private String username;
     @NotBlank
     private String password;
-    @NotBlank
+    @NotNull
     private Boolean statut;
     @NotNull
     private Date dateCreation;
