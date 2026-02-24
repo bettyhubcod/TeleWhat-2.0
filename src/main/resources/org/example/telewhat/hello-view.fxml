@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
-
 <?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.telewhat.HelloController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-    </padding>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-    <Label fx:id="welcomeText"/>
-    <Button text="Hello!" onAction="#onHelloButtonClick"/>
-</VBox>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="463.0" prefWidth="725.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Text layoutX="205.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-cursor: pink;" text="INSCRIPTION" underline="true">
+         <font>
+            <Font size="36.0" />
+         </font>
+      </Text>
+      <TextField fx:id="IdUsername" layoutX="127.0" layoutY="115.0" prefHeight="27.0" prefWidth="248.0" />
+      <Text layoutX="41.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="NOM" />
+      <TextField fx:id="IdPassword" layoutX="127.0" layoutY="191.0" prefHeight="27.0" prefWidth="248.0" />
+      <Text layoutX="37.0" layoutY="210.0" strokeType="OUTSIDE" strokeWidth="0.0" text="MOT DE PASSE" />
+      <Button fx:id="btnregister" layoutX="265.0" layoutY="364.0" mnemonicParsing="false" text="INSCRIPTION" />
+   </children>
+</AnchorPane>
