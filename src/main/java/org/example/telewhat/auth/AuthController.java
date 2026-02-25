@@ -38,7 +38,8 @@ public class AuthController {
         String password = IdPassword.getText().trim();
 
         if (username.isEmpty() || password.isEmpty()) {
-            statusLabel.setText("Veuillez remplir tous les champs !");
+            showAlert("Erreur", "Veuillez remplir tous les champs !");
+            System.out.println("Tentative d'inscription avec champs vides !");
             return;
         }
 
@@ -57,16 +58,25 @@ public class AuthController {
             em.persist(user);
             tx.commit();
 
-            statusLabel.setText("Inscription réussie !");
+            showAlert("Succès", "Inscription réussie !");
+            System.out.println("Inscription réussie pour l'utilisateur : " + username);
             IdUsername.clear();
             IdPassword.clear();
 
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
-            statusLabel.setText("Erreur lors de l'inscription !");
+            showAlert("Erreur", "Nom d'utilisateur deja utilisé !");
+            System.out.println("Échec d'inscription pour l'utilisateur : " + username);
         } finally {
             em.close();
         }
+    }
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
