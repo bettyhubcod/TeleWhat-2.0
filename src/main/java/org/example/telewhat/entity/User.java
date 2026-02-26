@@ -2,6 +2,7 @@ package org.example.telewhat.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.telewhat.enumeration.Off_on;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -24,7 +25,8 @@ public class User {
     @NotBlank
     private String password;
     @NotNull
-    private Boolean statut;
+    @Enumerated(EnumType.STRING)
+    private Off_on status;
     @NotNull
     private Date dateCreation;
 

@@ -12,7 +12,8 @@ import java.util.Date;
 public class Launcher {
     public static void main(String[] args) {
 
-        String password = "monMotDePasse"; // mot de passe clair
+        String hashed = BCrypt.hashpw("betty", BCrypt.gensalt());
+        System.out.println(hashed);
 
         Application.launch(HelloApplication.class, args);
     }
