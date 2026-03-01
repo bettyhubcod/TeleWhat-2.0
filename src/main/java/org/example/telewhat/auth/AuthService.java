@@ -3,6 +3,7 @@ package org.example.telewhat.auth;
 import org.example.telewhat.entity.User;
 import jakarta.persistence.EntityManager;
 import org.example.telewhat.enumeration.Off_on;
+import org.example.telewhat.enumeration.Status;
 import org.example.telewhat.repository.UserRepository;
 import jakarta.persistence.EntityTransaction;
 import org.example.telewhat.utils.JpaUtil;
@@ -30,7 +31,7 @@ public class AuthService {
 
         boolean valid = PasswordUtils.verifyPassword(password, user.getPassword());
         if (valid) {
-            user.setStatus(Off_on.ONLINE);
+            user.setStatut(Status.ONLINE);
             userRepository.update(user);
         }
         return valid;

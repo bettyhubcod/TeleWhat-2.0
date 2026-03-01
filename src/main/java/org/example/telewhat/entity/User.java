@@ -27,9 +27,7 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private Off_on status;
+
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
