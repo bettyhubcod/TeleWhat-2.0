@@ -4,15 +4,23 @@ module org.example.telewhat {
     requires jakarta.persistence;
     requires static lombok;
     requires java.validation;
-    requires org.hibernate.orm.core; // Hibernate
+    requires org.hibernate.orm.core;
     requires jbcrypt;
+    requires org.postgresql.jdbc;
+   // Hibernate
+
+
+
+
+    opens org.example.telewhat to javafx.fxml;
+    opens org.example.telewhat.auth to javafx.fxml;
 
     // Ouvrir les controllers à FXMLLoader
-    opens org.example.telewhat.auth to javafx.fxml;
 
     // Ouvrir les packages à Hibernate
     opens org.example.telewhat.entity to org.hibernate.orm.core;
 
-    // Exports pour les autres modules si nécessaire
     exports org.example.telewhat;
+    exports org.example.telewhat.utils;
+    opens org.example.telewhat.utils to javafx.fxml;
 }

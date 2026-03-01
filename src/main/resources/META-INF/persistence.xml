@@ -5,6 +5,8 @@
              version="2.1">
 
     <persistence-unit name="PERSISTENCE" transaction-type="RESOURCE_LOCAL">
+
+
         <!-- JDBC Connection Configuration -->
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />
