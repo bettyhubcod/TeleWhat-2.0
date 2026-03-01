@@ -14,7 +14,7 @@ import org.example.telewhat.enumeration.Status;
 @AllArgsConstructor
 @ToString
 public class User implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
