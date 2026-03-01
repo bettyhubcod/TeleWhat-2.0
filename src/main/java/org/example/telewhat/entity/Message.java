@@ -7,6 +7,7 @@ import org.example.telewhat.enumeration.StatutMessage;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
@@ -15,7 +16,9 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Message {
+public class Message implements Serializable {
+
+    private static final long serialVersionUID = 2L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

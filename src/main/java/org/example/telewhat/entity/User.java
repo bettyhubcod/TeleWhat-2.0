@@ -1,10 +1,8 @@
 package org.example.telewhat.entity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.example.telewhat.enumeration.Off_on;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.Date;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import org.example.telewhat.enumeration.Status;
 
@@ -15,7 +13,9 @@ import org.example.telewhat.enumeration.Status;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class User {
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

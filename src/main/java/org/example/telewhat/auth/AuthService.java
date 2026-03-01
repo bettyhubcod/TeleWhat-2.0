@@ -2,7 +2,6 @@ package org.example.telewhat.auth;
 
 import org.example.telewhat.entity.User;
 import jakarta.persistence.EntityManager;
-import org.example.telewhat.enumeration.Off_on;
 import org.example.telewhat.enumeration.Status;
 import org.example.telewhat.repository.UserRepository;
 import jakarta.persistence.EntityTransaction;
