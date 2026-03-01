@@ -10,9 +10,14 @@ module org.example.telewhat {
    // Hibernate
 
 
+
+
     opens org.example.telewhat to javafx.fxml;
     opens org.example.telewhat.auth to javafx.fxml;
 
+    // Ouvrir les controllers à FXMLLoader
+
+    // Ouvrir les packages à Hibernate
     opens org.example.telewhat.entity to org.hibernate.orm.core;
 
     exports org.example.telewhat;

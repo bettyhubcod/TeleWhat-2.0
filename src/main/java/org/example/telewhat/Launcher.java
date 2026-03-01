@@ -12,9 +12,11 @@ import java.util.Date;
 public class Launcher {
     public static void main(String[] args) {
 
-        String hashed = BCrypt.hashpw("betty", BCrypt.gensalt());
-        System.out.println(hashed);
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("PERSISTENCE");
+        EntityManager em = emf.createEntityManager();
 
+        Application.launch(HelloApplication.class, args);
+        System.out.println("✅ Hibernate connecté à la base !");
         Application.launch(HelloApplication.class, args);
     }
 }
