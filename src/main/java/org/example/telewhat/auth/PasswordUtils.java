@@ -10,8 +10,10 @@ public class PasswordUtils {
 
     public static boolean verifyPassword(String password, String hashedPassword) {
             return BCrypt.checkpw(password, hashedPassword);
+    }
     // Vérifier un mot de passe
     public static boolean checkPassword(String plainPassword, String hashedPassword) {
         return BCrypt.checkpw(plainPassword, hashedPassword);
     }
+
 }

@@ -16,6 +16,7 @@ import org.example.telewhat.enumeration.Status;
 @AllArgsConstructor
 @ToString
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,15 +26,14 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private Off_on status;
-    @NotNull
-    private Date dateCreation;
 
-    @Enumerated(EnumType.STRING) // 👈 IMPORTANT
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status statut = Status.OFFLINE; // 👈 par défaut
+    private Status statut = Status.OFFLINE;
 
     @Column(nullable = false)
     private LocalDateTime dateCreation;
@@ -41,7 +41,7 @@ public class User {
     public User(String username, String password) {
         this.username = username;
         this.password = password;
-        this.statut = Status.OFFLINE; // 👈 OFFLINE par défaut
+        this.statut = Status.OFFLINE;
         this.dateCreation = LocalDateTime.now();
     }
 }
