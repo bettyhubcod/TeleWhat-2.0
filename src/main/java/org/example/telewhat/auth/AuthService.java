@@ -19,6 +19,7 @@ public class AuthService {
 
     public AuthService() {
         em = JpaUtil.getEntityManager();
+        this.userRepository = new UserRepository(em);
     }
 
     public boolean login(String username, String password) {
