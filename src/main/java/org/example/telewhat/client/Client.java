@@ -33,46 +33,135 @@ public class Client {
     }
 
     // ============================================================
-    // MAIN — pour tester sans JavaFX
+    // MAIN — Tests toutes les règles
     // ============================================================
     public static void main(String[] args) throws InterruptedException {
 
-        Client client = new Client("oumou", new MessageListener() {
+        System.out.println("═══════════════════════════════════════");
+        System.out.println("         TEST TOUTES LES RÈGLES        ");
+        System.out.println("═══════════════════════════════════════");
+
+        // ============================================================
+        // TEST RG3 : double connexion
+        // ============================================================
+        System.out.println("\n🔵 TEST RG3 : Double connexion");
+        Client sidy1 = new Client("sidy ndiaye", new MessageListener() {
             @Override
             public void onMessageReceived(Message message) {
-                System.out.println("📩 Message reçu de " + message.getSender()
-                        + " : " + message.getContenue());
+                System.out.println("📩 sidy reçoit : " + message.getContenue());
             }
-
             @Override
             public void onConnectionLost() {
-                System.out.println("❌ Connexion perdue !");
+                System.out.println("❌ sidy : connexion perdue !");
             }
         });
+        sidy1.connect("passer");
 
-        boolean connecte = client.connect("password123");
+        Thread.sleep(500);
 
-        if (connecte) {
-            System.out.println("✅ Connecté avec succès !");
+        // Tentative double connexion → serveur répond automatiquement ERREUR
+        Client sidy2 = new Client("sidy ndiaye", new MessageListener() {
+            @Override
+            public void onMessageReceived(Message message) {}
+            @Override
+            public void onConnectionLost() {}
+        });
+        sidy2.connect("passer");
+        // ClientHandler envoie "ERREUR: Utilisateur déjà connecté" → connect() retourne false
 
-            // Envoyer un message à betty
-            Message msg = new Message();
-            msg.setSender("oumou");
-            msg.setReceveur("betty");
-            msg.setContenue("salut betty !");
-            msg.setDateEnvoie(new Date());
-            msg.setStatut(StatutMessage.ENVOYER);
-            client.sendMessage(msg);
+        Thread.sleep(500);
 
-            System.out.println("📨 Message envoyé !");
+        // ============================================================
+        // TEST RG6 : message à abdoulayemathurin OFFLINE
+        // ============================================================
+        System.out.println("\n🔵 TEST RG6 : Message à user OFFLINE");
+        Message msgOffline = new Message();
+        msgOffline.setSender("sidy ndiaye");
+        msgOffline.setReceveur("abdoulaye mathurin");
+        msgOffline.setContenue("Salut, tu es offline mais tu recevras ce message !");
+        msgOffline.setDateEnvoie(new Date());
+        msgOffline.setStatut(StatutMessage.ENVOYER);
+        sidy1.sendMessage(msgOffline);
+        // ClientHandler sauvegarde en BD automatiquement
 
-            // Rester connecté pour recevoir des réponses
-            Thread.sleep(10000);
+        Thread.sleep(500);
 
-            client.disconnect();
-        } else {
-            System.out.println("❌ Échec de la connexion !");
-        }
+        // ============================================================
+        // TEST RG7 : message vide
+        // ============================================================
+        System.out.println("\n🔵 TEST RG7 : Message vide");
+        Message msgVide = new Message();
+        msgVide.setSender("sidy ndiaye");
+        msgVide.setReceveur("abdoulaye mathurin");
+        msgVide.setContenue("");
+        msgVide.setDateEnvoie(new Date());
+        msgVide.setStatut(StatutMessage.ENVOYER);
+        sidy1.sendMessage(msgVide);
+        // ClientHandler répond "ERREUR: Message vide" → affiché dans startListenerThread
+
+        Thread.sleep(500);
+
+        // ============================================================
+        // TEST RG7 : message trop long
+        // ============================================================
+        System.out.println("\n🔵 TEST RG7 : Message trop long");
+        Message msgLong = new Message();
+        msgLong.setSender("sidy ndiaye");
+        msgLong.setReceveur("abdoulaye mathurin");
+        msgLong.setContenue("A".repeat(1001));
+        msgLong.setDateEnvoie(new Date());
+        msgLong.setStatut(StatutMessage.ENVOYER);
+        sidy1.sendMessage(msgLong);
+        // ClientHandler répond "ERREUR: Message trop long"
+
+        Thread.sleep(500);
+
+        // ============================================================
+        // TEST RG5 : destinataire inexistant
+        // ============================================================
+        System.out.println("\n🔵 TEST RG5 : Destinataire inexistant");
+        Message msgInconnu = new Message();
+        msgInconnu.setSender("sidy ndiaye");
+        msgInconnu.setReceveur("userinconnu123");
+        msgInconnu.setContenue("Ce message ne devrait pas passer");
+        msgInconnu.setDateEnvoie(new Date());
+        msgInconnu.setStatut(StatutMessage.ENVOYER);
+        sidy1.sendMessage(msgInconnu);
+        // ClientHandler répond "ERREUR: Destinataire introuvable"
+
+        Thread.sleep(500);
+
+        // ============================================================
+        // TEST RG6 : abdou se connecte → reçoit messages en attente
+        // ============================================================
+        System.out.println("\n🔵 TEST RG6 : abdou se connecte → reçoit messages en attente");
+        Client abdou = new Client("abdoulaye mathurin", new MessageListener() {
+            @Override
+            public void onMessageReceived(Message message) {
+                System.out.println("📩 abdou reçoit de "
+                        + message.getSender() + " : " + message.getContenue());
+            }
+            @Override
+            public void onConnectionLost() {
+                System.out.println("❌ abdou : connexion perdue !");
+            }
+        });
+        abdou.connect("passer");
+        // ClientHandler livre automatiquement les messages en attente (RG6)
+
+        Thread.sleep(2000);
+
+        // ============================================================
+        // TEST RG4 : déconnexion → OFFLINE automatique via ClientHandler
+        // ============================================================
+        System.out.println("\n🔵 TEST RG4 : Déconnexion");
+        sidy1.disconnect();
+        abdou.disconnect();
+        // ClientHandler appelle userService.deconnecter() → statut OFFLINE en BD
+
+        System.out.println("\n═══════════════════════════════════════");
+        System.out.println("         FIN DES TESTS                 ");
+        System.out.println("═══════════════════════════════════════");
     }
 
     // ============================================================
@@ -114,22 +203,14 @@ public class Client {
                 try {
                     Object received = in.readObject();
 
-                    // Cas 1 : c'est un message
                     if (received instanceof Message message) {
                         if (messageListener != null) {
                             messageListener.onMessageReceived(message);
                         }
-                    }
-
-                    // Cas 2 : c'est la liste des connectés (Day 3)
-                    else if (received instanceof List) {
+                    } else if (received instanceof List) {
                         List<String> connectes = (List<String>) received;
                         System.out.println("👥 Users connectés : " + connectes);
-                        // Plus tard → afficher dans JavaFX
-                    }
-
-                    // Cas 3 : c'est une info ou erreur du serveur
-                    else if (received instanceof String) {
+                    } else if (received instanceof String) {
                         System.out.println("[SERVEUR] " + received);
                     }
 
