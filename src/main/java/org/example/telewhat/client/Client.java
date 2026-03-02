@@ -2,15 +2,18 @@ package org.example.telewhat.client;
 
 import org.example.telewhat.entity.Message;
 import org.example.telewhat.entity.User;
+import org.example.telewhat.enumeration.StatutMessage;
 
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Date;
+import java.util.List;
 
 public class Client {
 
     private static final String SERVER_HOST = "localhost";
-    private static final int SERVER_PORT = 8080; // ✅ même port que Server.java
+    private static final int SERVER_PORT = 8080;
 
     private Socket socket;
     private ObjectOutputStream out;
@@ -32,7 +35,7 @@ public class Client {
     // ============================================================
     // MAIN — pour tester sans JavaFX
     // ============================================================
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         Client client = new Client("oumou", new MessageListener() {
             @Override
@@ -47,11 +50,26 @@ public class Client {
             }
         });
 
-        // Teste la connexion avec un user qui existe en base
         boolean connecte = client.connect("password123");
 
         if (connecte) {
             System.out.println("✅ Connecté avec succès !");
+
+            // Envoyer un message à betty
+            Message msg = new Message();
+            msg.setSender("oumou");
+            msg.setReceveur("betty");
+            msg.setContenue("salut betty !");
+            msg.setDateEnvoie(new Date());
+            msg.setStatut(StatutMessage.ENVOYER);
+            client.sendMessage(msg);
+
+            System.out.println("📨 Message envoyé !");
+
+            // Rester connecté pour recevoir des réponses
+            Thread.sleep(10000);
+
+            client.disconnect();
         } else {
             System.out.println("❌ Échec de la connexion !");
         }
@@ -95,11 +113,26 @@ public class Client {
             while (connected) {
                 try {
                     Object received = in.readObject();
+
+                    // Cas 1 : c'est un message
                     if (received instanceof Message message) {
                         if (messageListener != null) {
                             messageListener.onMessageReceived(message);
                         }
                     }
+
+                    // Cas 2 : c'est la liste des connectés (Day 3)
+                    else if (received instanceof List) {
+                        List<String> connectes = (List<String>) received;
+                        System.out.println("👥 Users connectés : " + connectes);
+                        // Plus tard → afficher dans JavaFX
+                    }
+
+                    // Cas 3 : c'est une info ou erreur du serveur
+                    else if (received instanceof String) {
+                        System.out.println("[SERVEUR] " + received);
+                    }
+
                 } catch (SocketException e) {
                     if (connected) {
                         connected = false;

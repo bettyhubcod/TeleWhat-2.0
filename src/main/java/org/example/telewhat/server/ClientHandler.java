@@ -7,6 +7,8 @@ import org.example.telewhat.service.UserService;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientHandler implements Runnable {
 
@@ -92,6 +94,18 @@ public class ClientHandler implements Runnable {
                 + Server.clientsConnectes.size());
 
         oos.writeObject("CONNEXION_OK");
+
+        envoyerListeConnectes();
+    }
+
+    private void envoyerListeConnectes() throws IOException {
+        // Récupérer tous les usernames connectés
+        List<String> connectes = new ArrayList<>(Server.clientsConnectes.keySet());
+
+        // Envoyer la liste à TOUS les clients connectés
+        for (ClientHandler handler : Server.clientsConnectes.values()) {
+            handler.envoyerObjet(connectes);
+        }
     }
 
     private void gererMessage(Message message) throws IOException {
