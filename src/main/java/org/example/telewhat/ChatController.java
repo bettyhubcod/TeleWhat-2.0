@@ -55,7 +55,7 @@ public class ChatController {
             @Override
             public void onMessageReceived(Message message) {
                 Platform.runLater(() -> afficherMessage(
-                        message.getSender() + " : " + message.getContenue(), false));
+                        message.getSender() + " : \n" + message.getContenue(), false));
             }
 
             @Override
@@ -91,7 +91,7 @@ public class ChatController {
         String texte = messageInput.getText();
         if (texte == null || texte.isEmpty()) return;
 
-        afficherMessage("Moi : " + texte, true);
+        afficherMessage(" " + texte, true);
 
         Message message = new Message();
         message.setSender(username);
