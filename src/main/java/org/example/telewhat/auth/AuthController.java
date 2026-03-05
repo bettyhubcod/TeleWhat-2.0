@@ -31,7 +31,6 @@ public class AuthController {
         this.entityManager = JPAUtils.getEntityManagerFactory().createEntityManager();
         authService = new AuthService(entityManager);
     }
-
     @FXML
     void loginAction(ActionEvent event) {
         String username = idUsername.getText();
@@ -48,15 +47,20 @@ public class AuthController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/telewhat/chat-view.fxml"));
                 Scene scene = new Scene(loader.load(), 900, 600);
 
-                // Passer le username au ChatController
                 ChatController chatController = loader.getController();
                 chatController.setUsername(username);
                 chatController.setPassword(password);
 
-                Stage stage = (Stage) btn_login.getScene().getWindow();
-                stage.setTitle("TeleWhat - " + username);
-                stage.setScene(scene);
-                stage.show();
+                // Nouvelle fenêtre au lieu de remplacer la page de login
+                Stage chatStage = new Stage();
+                chatStage.setTitle("TeleWhat - " + username);
+                chatStage.setScene(scene);
+                chatStage.show();
+
+                // Vider les champs pour une prochaine connexion
+                idUsername.clear();
+                idPassword.clear();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

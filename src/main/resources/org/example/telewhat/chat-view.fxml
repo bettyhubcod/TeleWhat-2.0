@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.telewhat.ChatController" >
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.telewhat.HelloController">
+
     <!-- SIDEBAR GAUCHE -->
     <left>
         <VBox prefHeight="600.0" prefWidth="280.0" style="-fx-background-color: #0F2A1D; -fx-padding: 16; -fx-spacing: 8;" BorderPane.alignment="CENTER">
             <children>
-                <Label text="Groupe Chat" style="-fx-text-fill: #E3EED4; -fx-font-size: 20px; -fx-font-weight: bold;" />
-                <Label text="4 en ligne · 8 membres" style="-fx-text-fill: #AEC3B0; -fx-font-size: 12px;" />
-                <Label text="EN LIGNE — 4" style="-fx-text-fill: #6B9071; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 8 0 4 0;" />
-                <ListView fx:id="onlineUsersList" prefHeight="200.0" prefWidth="248.0"
-                          style="-fx-background-color: transparent; -fx-border-color: transparent;" />
-                <Label text="HORS LIGNE — 4" style="-fx-text-fill: #AEC3B0; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 8 0 4 0;" />
-                <ListView fx:id="offlineUsersList" prefHeight="200.0" prefWidth="248.0"
-                          style="-fx-background-color: transparent; -fx-border-color: transparent;" />
+                <Label style="-fx-text-fill: #E3EED4; -fx-font-size: 20px; -fx-font-weight: bold;" text="CONTACTS" />
+                <Label style="-fx-text-fill: #AEC3B0; -fx-font-size: 12px;" />
+                <Label style="-fx-text-fill: #6B9071; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 8 0 4 0;" text="EN LIGNE " />
+                <ListView fx:id="onlineUsersList" prefHeight="200.0" prefWidth="248.0" style="-fx-background-color: transparent; -fx-border-color: transparent;" />
+                <Label style="-fx-text-fill: #AEC3B0; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 8 0 4 0;" text="HORS LIGNE" />
+                <ListView fx:id="offlineUsersList" prefHeight="200.0" prefWidth="248.0" style="-fx-background-color: transparent; -fx-border-color: transparent;" />
             </children>
         </VBox>
     </left>
@@ -34,7 +35,11 @@
                 <StackPane>
 
                     <!-- FOND D'ECRAN -->
-                    <ImageView fx:id="backgroundImage" fitHeight="600" fitWidth="620" preserveRatio="false"/>
+                    <ImageView fitHeight="600" fitWidth="620" preserveRatio="false">
+                        <image>
+                            <Image url="@../images/bg-green.jpg" />
+                        </image>
+                    </ImageView>
 
                     <!-- CONTENU PAR DESSUS LE FOND -->
                     <BorderPane>
@@ -43,11 +48,11 @@
                         <top>
                             <HBox prefHeight="60.0" prefWidth="620.0" style="-fx-background-color: #0F2A1D; -fx-padding: 10 16; -fx-alignment: center-left; -fx-spacing: 12;" BorderPane.alignment="CENTER">
                                 <children>
-                                    <Label text="GC" style="-fx-background-color: #375534; -fx-text-fill: #E3EED4; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 50; -fx-min-width: 40; -fx-min-height: 40; -fx-alignment: center;" />
+                                    <Label style="-fx-background-color: #375534; -fx-text-fill: #E3EED4; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 50; -fx-min-width: 40; -fx-min-height: 40; -fx-alignment: center;" text="initiale" />
                                     <VBox style="-fx-spacing: 2; -fx-alignment: center-left;">
                                         <children>
-                                            <Label text="Groupe Projet" style="-fx-text-fill: #E3EED4; -fx-font-size: 15px; -fx-font-weight: bold;" />
-                                            <Label text="8 membres · 4 en ligne" style="-fx-text-fill: #6B9071; -fx-font-size: 11px;" />
+                                            <Label style="-fx-text-fill: #E3EED4; -fx-font-size: 15px; -fx-font-weight: bold;" text="USER" />
+                                            <Label style="-fx-text-fill: #6B9071; -fx-font-size: 11px;" text=" en ligne" />
                                         </children>
                                     </VBox>
                                 </children>
@@ -67,10 +72,8 @@
                         <bottom>
                             <HBox prefHeight="55.0" prefWidth="620.0" style="-fx-background-color: #0F2A1D; -fx-padding: 10 16; -fx-spacing: 10; -fx-alignment: center;" BorderPane.alignment="CENTER">
                                 <children>
-                                    <TextField fx:id="messageInput" promptText="Écrire un message..." HBox.hgrow="ALWAYS"
-                                               style="-fx-background-color: #375534; -fx-text-fill: #E3EED4; -fx-prompt-text-fill: #AEC3B0; -fx-background-radius: 20; -fx-padding: 10 16;" />
-                                    <Button fx:id="sendButton" text="➤" onAction="#sendMessage"
-                                            style="-fx-background-color: #6B9071; -fx-text-fill: #E3EED4; -fx-background-radius: 20; -fx-padding: 10 16; -fx-cursor: hand;" />
+                                    <TextField fx:id="messageInput" promptText="Écrire un message..." style="-fx-background-color: #375534; -fx-text-fill: #E3EED4; -fx-prompt-text-fill: #AEC3B0; -fx-background-radius: 20; -fx-padding: 10 16;" HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="sendButton" onAction="#sendMessage" style="-fx-background-color: #6B9071; -fx-text-fill: #E3EED4; -fx-background-radius: 20; -fx-padding: 10 16; -fx-cursor: hand;" text="➤" />
                                 </children>
                             </HBox>
                         </bottom>
