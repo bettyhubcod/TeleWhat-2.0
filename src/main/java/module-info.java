@@ -7,7 +7,8 @@ module org.example.telewhat {
     requires org.hibernate.orm.core;
     requires jbcrypt;
     requires org.postgresql.jdbc;
-   // Hibernate
+    requires java.desktop;
+    // Hibernate
 
 
 

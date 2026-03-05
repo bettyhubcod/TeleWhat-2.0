@@ -17,6 +17,6 @@ public class Launcher {
 
         Application.launch(HelloApplication.class, args);
         System.out.println("✅ Hibernate connecté à la base !");
-        Application.launch(HelloApplication.class, args);
+
     }
 }
