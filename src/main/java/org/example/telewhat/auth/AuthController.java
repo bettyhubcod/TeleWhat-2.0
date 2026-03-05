@@ -9,7 +9,11 @@ import org.example.telewhat.entity.User;
 import org.example.telewhat.utils.JPAUtils;
 import org.example.telewhat.utils.JpaUtil;
 import org.mindrot.jbcrypt.BCrypt;
-
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import java.io.IOException;
+import org.example.telewhat.ChatController;
 public class AuthController {
 
     private AuthService authService;
@@ -22,7 +26,6 @@ public class AuthController {
     @FXML private Button btn_login;
     @FXML private Button btn_register;
     @FXML private Label statusLabel;
-
     @FXML
     public void initialize() {
         this.entityManager = JPAUtils.getEntityManagerFactory().createEntityManager();
@@ -36,17 +39,29 @@ public class AuthController {
 
         if (username.isEmpty() || password.isEmpty()) {
             showAlert("Erreur", "Veuillez remplir tous les champs !");
-            System.out.println("Tentative de login avec champs vides !");
             return;
         }
 
         boolean success = authService.login(username, password);
         if (success) {
-            showAlert("Succès", "Connexion réussie !");
-            System.out.println("Connexion réussie pour l'utilisateur : " + username);
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/telewhat/chat-view.fxml"));
+                Scene scene = new Scene(loader.load(), 900, 600);
+
+                // Passer le username au ChatController
+                ChatController chatController = loader.getController();
+                chatController.setUsername(username);
+                chatController.setPassword(password);
+
+                Stage stage = (Stage) btn_login.getScene().getWindow();
+                stage.setTitle("TeleWhat - " + username);
+                stage.setScene(scene);
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
             showAlert("Erreur", "Nom d'utilisateur ou mot de passe incorrect !");
-            System.out.println("Échec de connexion pour l'utilisateur : " + username);
         }
     }
 
