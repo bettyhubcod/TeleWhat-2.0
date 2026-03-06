@@ -5,25 +5,24 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.telewhat.HelloController">
-
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.telewhat.ChatController">
     <!-- SIDEBAR GAUCHE -->
     <left>
         <VBox prefHeight="600.0" prefWidth="280.0" style="-fx-background-color: #0F2A1D; -fx-padding: 16; -fx-spacing: 8;" BorderPane.alignment="CENTER">
             <children>
-                <Label style="-fx-text-fill: #E3EED4; -fx-font-size: 20px; -fx-font-weight: bold;" text="CONTACTS" />
+                <Label style="-fx-text-fill: #E3EED4; -fx-font-size: 20px; -fx-font-weight: bold;" text="Repertoire" />
                 <Label style="-fx-text-fill: #AEC3B0; -fx-font-size: 12px;" />
-                <Label style="-fx-text-fill: #6B9071; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 8 0 4 0;" text="EN LIGNE " />
+                <Label style="-fx-text-fill: #6B9071; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 8 0 4 0;" text="EN LIGNE" />
                 <ListView fx:id="onlineUsersList" prefHeight="200.0" prefWidth="248.0" style="-fx-background-color: transparent; -fx-border-color: transparent;" />
                 <Label style="-fx-text-fill: #AEC3B0; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 8 0 4 0;" text="HORS LIGNE" />
                 <ListView fx:id="offlineUsersList" prefHeight="200.0" prefWidth="248.0" style="-fx-background-color: transparent; -fx-border-color: transparent;" />
+
             </children>
         </VBox>
     </left>
@@ -35,11 +34,7 @@
                 <StackPane>
 
                     <!-- FOND D'ECRAN -->
-                    <ImageView fitHeight="600" fitWidth="620" preserveRatio="false">
-                        <image>
-                            <Image url="@../images/bg-green.jpg" />
-                        </image>
-                    </ImageView>
+                    <ImageView fx:id="backgroundImage" fitHeight="600" fitWidth="620" preserveRatio="false" />
 
                     <!-- CONTENU PAR DESSUS LE FOND -->
                     <BorderPane>
@@ -48,13 +43,12 @@
                         <top>
                             <HBox prefHeight="60.0" prefWidth="620.0" style="-fx-background-color: #0F2A1D; -fx-padding: 10 16; -fx-alignment: center-left; -fx-spacing: 12;" BorderPane.alignment="CENTER">
                                 <children>
-                                    <Label style="-fx-background-color: #375534; -fx-text-fill: #E3EED4; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 50; -fx-min-width: 40; -fx-min-height: 40; -fx-alignment: center;" text="initiale" />
                                     <VBox style="-fx-spacing: 2; -fx-alignment: center-left;">
                                         <children>
-                                            <Label style="-fx-text-fill: #E3EED4; -fx-font-size: 15px; -fx-font-weight: bold;" text="USER" />
-                                            <Label style="-fx-text-fill: #6B9071; -fx-font-size: 11px;" text=" en ligne" />
+                                            <Label style="-fx-text-fill: #6B9071; -fx-font-size: 11px;" />
                                         </children>
                                     </VBox>
+                                    <Label fx:id="headerLabel" style="-fx-text-fill: #E3EED4; -fx-font-size: 15px; -fx-font-weight: bold;" text="Chargement..." />
                                 </children>
                             </HBox>
                         </top>

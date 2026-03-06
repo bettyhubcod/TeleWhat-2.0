@@ -112,8 +112,16 @@ public class ClientHandler implements Runnable {
 
     private void envoyerListeConnectes() throws IOException {
         List<String> connectes = new ArrayList<>(Server.clientsConnectes.keySet());
+        List<String> tousLesUsers = userService.getTousLesUsers();
+        List<String> offline = new ArrayList<>();
+        for (String user : tousLesUsers) {
+            if (!connectes.contains(user)) {
+                offline.add(user);
+            }
+        }
         for (ClientHandler handler : Server.clientsConnectes.values()) {
             handler.envoyerObjet(connectes);
+            handler.envoyerObjet(offline);
         }
     }
 

@@ -20,11 +20,13 @@ public class Client {
     private ObjectInputStream in;
     private String username;
     private boolean connected = false;
+    private boolean onlineReceived = false;
     private MessageListener messageListener;
 
     public interface MessageListener {
         void onMessageReceived(Message message);
         void onUsersListReceived(List<String> connectes);
+        void onOfflineUsersListReceived(List<String> offline);
         void onConnectionLost();
     }
 
@@ -33,9 +35,6 @@ public class Client {
         this.messageListener = listener;
     }
 
-    // ============================================================
-    // MAIN — Tests toutes les règles
-    // ============================================================
     public static void main(String[] args) throws InterruptedException {
 
         System.out.println("═══════════════════════════════════════");
@@ -53,6 +52,10 @@ public class Client {
                 System.out.println("👥 Users connectés : " + connectes);
             }
             @Override
+            public void onOfflineUsersListReceived(List<String> offline) {
+                System.out.println("⚫ Users offline : " + offline);
+            }
+            @Override
             public void onConnectionLost() {
                 System.out.println("❌ sidy : connexion perdue !");
             }
@@ -66,6 +69,8 @@ public class Client {
             public void onMessageReceived(Message message) {}
             @Override
             public void onUsersListReceived(List<String> connectes) {}
+            @Override
+            public void onOfflineUsersListReceived(List<String> offline) {}
             @Override
             public void onConnectionLost() {}
         });
@@ -129,6 +134,10 @@ public class Client {
                 System.out.println("👥 Users connectés : " + connectes);
             }
             @Override
+            public void onOfflineUsersListReceived(List<String> offline) {
+                System.out.println("⚫ Users offline : " + offline);
+            }
+            @Override
             public void onConnectionLost() {
                 System.out.println("❌ abdou : connexion perdue !");
             }
@@ -146,9 +155,6 @@ public class Client {
         System.out.println("═══════════════════════════════════════");
     }
 
-    // ============================================================
-    // Connexion au serveur
-    // ============================================================
     public boolean connect(String password) {
         try {
             socket = new Socket(SERVER_HOST, SERVER_PORT);
@@ -176,9 +182,6 @@ public class Client {
         }
     }
 
-    // ============================================================
-    // Thread d'écoute des messages entrants
-    // ============================================================
     private void startListenerThread() {
         Thread listenerThread = new Thread(() -> {
             while (connected) {
@@ -190,9 +193,15 @@ public class Client {
                             messageListener.onMessageReceived(message);
                         }
                     } else if (received instanceof List) {
-                        List<String> connectes = (List<String>) received;
+                        List<String> liste = (List<String>) received;
                         if (messageListener != null) {
-                            messageListener.onUsersListReceived(connectes);
+                            if (!onlineReceived) {
+                                messageListener.onUsersListReceived(liste);
+                                onlineReceived = true;
+                            } else {
+                                messageListener.onOfflineUsersListReceived(liste);
+                                onlineReceived = false;
+                            }
                         }
                     } else if (received instanceof String) {
                         System.out.println("[SERVEUR] " + received);
@@ -220,9 +229,6 @@ public class Client {
         listenerThread.start();
     }
 
-    // ============================================================
-    // Envoyer un message
-    // ============================================================
     public void sendMessage(Message message) {
         if (!connected) {
             System.err.println("[CLIENT] Impossible d'envoyer : \n vous n'êtes pas connecté.");
@@ -239,9 +245,6 @@ public class Client {
         }
     }
 
-    // ============================================================
-    // Déconnexion
-    // ============================================================
     public void disconnect() {
         connected = false;
         try {

@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -25,6 +26,7 @@ public class ChatController {
     @FXML private ImageView backgroundImage;
     @FXML private ListView<String> onlineUsersList;
     @FXML private ListView<String> offlineUsersList;
+    @FXML private Label headerLabel;
 
     private Client client;
     private String username;
@@ -35,13 +37,65 @@ public class ChatController {
         Image img = new Image(getClass().getResourceAsStream("/images/bg-green.jpeg"));
         backgroundImage.setImage(img);
 
-        // Quand on clique sur un user dans la liste → il devient le destinataire
+        // Style liste online
+        onlineUsersList.setCellFactory(lv -> new ListCell<String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle("-fx-background-color: transparent;"); // ← change ça
+                } else {
+                    setText("  " + item);
+                    setStyle(
+                            "-fx-text-fill: #E3EED4;" +
+                                    "-fx-font-size: 13px;" +
+                                    "-fx-font-weight: bold;" +
+                                    "-fx-padding: 8 0 8 4;" +
+                                    "-fx-background-color: transparent;"
+                    );
+                }
+            }
+        });
+
+        // Style liste offline
+        offlineUsersList.setCellFactory(lv -> new ListCell<String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText("  " + item);
+                    setStyle(
+                            "-fx-text-fill: #AEC3B0;" +
+                                    "-fx-font-size: 13px;" +
+                                    "-fx-font-weight: bold;" +
+                                    "-fx-padding: 8 0 8 4;" +
+                                    "-fx-background-color: transparent;"
+                    );
+                }
+            }
+        });
+
+        // Clic sur un user online
         onlineUsersList.setOnMouseClicked(event -> {
             String selected = onlineUsersList.getSelectionModel().getSelectedItem();
             if (selected != null && !selected.equals(username)) {
                 destinataire = selected;
                 messagesBox.getChildren().clear();
-                afficherInfo("💬 Conversation avec " + destinataire);
+                headerLabel.setText("Connecté : " + username + " — discussion " + destinataire);
+            }
+        });
+
+        // Clic sur un user offline
+        offlineUsersList.setOnMouseClicked(event -> {
+            String selected = offlineUsersList.getSelectionModel().getSelectedItem();
+            if (selected != null && !selected.equals(username)) {
+                destinataire = selected;
+                messagesBox.getChildren().clear();
+                headerLabel.setText("Connecté : " + username + " — discussion " + destinataire);
             }
         });
     }
@@ -55,7 +109,7 @@ public class ChatController {
             @Override
             public void onMessageReceived(Message message) {
                 Platform.runLater(() -> afficherMessage(
-                        message.getSender() + " : \n" + message.getContenue(), false));
+                        message.getSender() + " :\n" + message.getContenue(), false));
             }
 
             @Override
@@ -63,8 +117,20 @@ public class ChatController {
                 Platform.runLater(() -> {
                     onlineUsersList.getItems().clear();
                     for (String user : connectes) {
-                        if (!user.equals(username)) { // on n'affiche pas soi-même
+                        if (!user.equals(username)) {
                             onlineUsersList.getItems().add(user);
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onOfflineUsersListReceived(List<String> offline) {
+                Platform.runLater(() -> {
+                    offlineUsersList.getItems().clear();
+                    for (String user : offline) {
+                        if (!user.equals(username)) {
+                            offlineUsersList.getItems().add(user);
                         }
                     }
                 });
@@ -79,6 +145,8 @@ public class ChatController {
         boolean connecte = client.connect(password);
         if (!connecte) {
             afficherErreur("Impossible de se connecter au serveur.");
+        } else {
+            Platform.runLater(() -> headerLabel.setText("Connecté : " + username + " — sélectionne un utilisateur"));
         }
     }
 
@@ -91,7 +159,7 @@ public class ChatController {
         String texte = messageInput.getText();
         if (texte == null || texte.isEmpty()) return;
 
-        afficherMessage(" " + texte, true);
+        afficherMessage(texte, true);
 
         Message message = new Message();
         message.setSender(username);
@@ -127,7 +195,7 @@ public class ChatController {
     }
 
     private void afficherErreur(String texte) {
-        Label label = new Label("⚠️ " + texte);
+        Label label = new Label(" " + texte);
         label.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
         messagesBox.getChildren().add(label);
     }
