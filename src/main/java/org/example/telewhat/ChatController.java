@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import org.example.telewhat.client.Client;
 import org.example.telewhat.entity.Message;
 import org.example.telewhat.enumeration.StatutMessage;
+import org.example.telewhat.service.MessageService;
 
 import java.util.Date;
 import java.util.List;
@@ -31,6 +32,7 @@ public class ChatController {
     private Client client;
     private String username;
     private String destinataire;
+    private MessageService messageService = new MessageService();
 
     @FXML
     public void initialize() {
@@ -44,9 +46,9 @@ public class ChatController {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
-                    setStyle("-fx-background-color: transparent;"); // ← change ça
+                    setStyle("-fx-background-color: transparent;");
                 } else {
-                    setText("  " + item);
+                    setText("🟢  " + item);
                     setStyle(
                             "-fx-text-fill: #E3EED4;" +
                                     "-fx-font-size: 13px;" +
@@ -65,9 +67,9 @@ public class ChatController {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
-                    setStyle("");
+                    setStyle("-fx-background-color: transparent;");
                 } else {
-                    setText("  " + item);
+                    setText("⚫  " + item);
                     setStyle(
                             "-fx-text-fill: #AEC3B0;" +
                                     "-fx-font-size: 13px;" +
@@ -86,6 +88,7 @@ public class ChatController {
                 destinataire = selected;
                 messagesBox.getChildren().clear();
                 headerLabel.setText("Connecté : " + username + " — discussion " + destinataire);
+                chargerHistorique(destinataire);
             }
         });
 
@@ -96,8 +99,17 @@ public class ChatController {
                 destinataire = selected;
                 messagesBox.getChildren().clear();
                 headerLabel.setText("Connecté : " + username + " — discussion " + destinataire);
+                chargerHistorique(destinataire);
             }
         });
+    }
+
+    private void chargerHistorique(String destinataire) {
+        List<Message> historique = messageService.getHistorique(username, destinataire);
+        for (Message msg : historique) {
+            boolean estMoi = msg.getSender().equals(username);
+            afficherMessage(msg.getSender() + " :\n" + msg.getContenue(), estMoi);
+        }
     }
 
     public void setUsername(String username) {
@@ -146,7 +158,16 @@ public class ChatController {
         if (!connecte) {
             afficherErreur("Impossible de se connecter au serveur.");
         } else {
-            Platform.runLater(() -> headerLabel.setText("Connecté : " + username + " — sélectionne un utilisateur"));
+            Platform.runLater(() -> {
+                headerLabel.setText("Connecté : " + username + " — sélectionne un utilisateur");
+
+                // ✅ Déconnexion propre à la fermeture de la fenêtre
+                headerLabel.getScene().getWindow().setOnCloseRequest(event -> {
+                    if (client != null) {
+                        client.disconnect();
+                    }
+                });
+            });
         }
     }
 
@@ -159,7 +180,7 @@ public class ChatController {
         String texte = messageInput.getText();
         if (texte == null || texte.isEmpty()) return;
 
-        afficherMessage(texte, true);
+        afficherMessage(username + " :\n" + texte, true);
 
         Message message = new Message();
         message.setSender(username);
