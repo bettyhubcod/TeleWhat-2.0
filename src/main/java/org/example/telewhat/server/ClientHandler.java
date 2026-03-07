@@ -159,6 +159,7 @@ public class ClientHandler implements Runnable {
 
         // RG5 : destinataire connecté → livraison directe
         if (destinataireHandler != null) {
+            messageService.sauvegarder(message);
             destinataireHandler.envoyerObjet(message);
             messageService.mettreAJourStatut(message.getId(), StatutMessage.RECU);
             System.out.println("✅ Message livré à " + message.getReceveur());

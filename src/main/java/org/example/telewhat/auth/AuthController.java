@@ -55,6 +55,7 @@ public class AuthController {
                 Stage chatStage = new Stage();
                 chatStage.setTitle("TeleWhat - " + username);
                 chatStage.setScene(scene);
+                chatStage.setResizable(false);
                 chatStage.show();
 
                 // Vider les champs pour une prochaine connexion
