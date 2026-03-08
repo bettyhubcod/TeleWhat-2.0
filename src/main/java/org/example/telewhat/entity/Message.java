@@ -19,6 +19,7 @@ import java.util.Date;
 public class Message implements Serializable {
 
     private static final long serialVersionUID = 2L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,5 +40,4 @@ public class Message implements Serializable {
     @NotNull
     @Enumerated(EnumType.STRING)
     private StatutMessage statut;
-
 }

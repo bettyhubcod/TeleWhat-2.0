@@ -11,6 +11,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import org.example.telewhat.entity.LectureNotification;
 
 public class ClientHandler implements Runnable {
 
@@ -50,6 +51,8 @@ public class ClientHandler implements Runnable {
                         gererDeconnexion();
                         break;
                     }
+                }else if (objetRecu instanceof LectureNotification) {
+                    gererLectureNotification((LectureNotification) objetRecu);
                 }
             }
 
@@ -208,6 +211,16 @@ public class ClientHandler implements Runnable {
             if (socket != null) socket.close();
         } catch (IOException e) {
             System.out.println("❌ Erreur fermeture ressources : " + e.getMessage());
+        }
+    }
+    private void gererLectureNotification(LectureNotification notification) throws IOException {
+        // Mettre à jour en BD
+        messageService.marquerCommeLus(notification.getReader(), notification.getSender());
+
+        // Notifier l'expéditeur original que ses messages ont été lus
+        ClientHandler expediteurHandler = Server.clientsConnectes.get(notification.getSender());
+        if (expediteurHandler != null) {
+            expediteurHandler.envoyerObjet(notification);
         }
     }
 }
