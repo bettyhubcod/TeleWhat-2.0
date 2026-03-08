@@ -49,16 +49,20 @@ public class AuthController {
 
                 ChatController chatController = loader.getController();
                 chatController.setUsername(username);
-                chatController.setPassword(password);
 
-                // Nouvelle fenêtre au lieu de remplacer la page de login
+                // Tester la connexion au serveur AVANT d'ouvrir la fenêtre
+                boolean connecte = chatController.testerConnexion(password);
+                if (!connecte) {
+                    showAlert("Erreur", "Utilisateur déjà connecté ou serveur inaccessible !");
+                    return;
+                }
+
                 Stage chatStage = new Stage();
                 chatStage.setTitle("TeleWhat - " + username);
                 chatStage.setScene(scene);
                 chatStage.setResizable(false);
                 chatStage.show();
 
-                // Vider les champs pour une prochaine connexion
                 idUsername.clear();
                 idPassword.clear();
 

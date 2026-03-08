@@ -52,7 +52,7 @@ public class ChatController {
                     setText(null);
                     setStyle("-fx-background-color: transparent;");
                 } else {
-                    setText("  " + item);
+                    setText("🟢  " + item);
                     setStyle("-fx-text-fill: #E3EED4; -fx-font-size: 13px; -fx-font-weight: bold; -fx-padding: 8 0 8 4; -fx-background-color: transparent;");
                 }
             }
@@ -66,7 +66,7 @@ public class ChatController {
                     setText(null);
                     setStyle("-fx-background-color: transparent;");
                 } else {
-                    setText("  " + item);
+                    setText("⚫  " + item);
                     setStyle("-fx-text-fill: #AEC3B0; -fx-font-size: 13px; -fx-font-weight: bold; -fx-padding: 8 0 8 4; -fx-background-color: transparent;");
                 }
             }
@@ -96,17 +96,14 @@ public class ChatController {
         messagesBox.getChildren().clear();
         headerLabel.setText("Connecté : " + username + " — discussion " + destinataire);
 
-        // Toujours recharger depuis la BD pour avoir tous les messages
+        // Toujours recharger depuis la BD
         List<Message> historique = messageService.getHistorique(username, destinataire);
         for (Message msg : historique) {
             boolean estMoi = msg.getSender().equals(username);
             afficherMessage(msg.getSender() + " :\n" + msg.getContenue(), estMoi);
         }
 
-        // Ajouter les messages reçus en temps réel qui ne sont pas encore en BD
         if (discussions.containsKey(destinataire)) {
-            // Les messages en temps réel sont déjà dans discussions
-            // On les ajoute seulement s'ils ne sont pas déjà dans l'historique BD
             discussions.remove(destinataire);
         }
 
@@ -117,7 +114,7 @@ public class ChatController {
         this.username = username;
     }
 
-    public void setPassword(String password) {
+    public boolean testerConnexion(String password) {
         client = new Client(username, new Client.MessageListener() {
             @Override
             public void onMessageReceived(Message message) {
@@ -125,7 +122,6 @@ public class ChatController {
                     String expediteur = message.getSender();
                     String texte = expediteur + " :\n" + message.getContenue();
 
-                    // Créer le noeud du message
                     HBox conteneur = new HBox();
                     conteneur.setPadding(new Insets(4, 8, 4, 8));
                     conteneur.setAlignment(Pos.CENTER_LEFT);
@@ -134,21 +130,15 @@ public class ChatController {
                     label.setWrapText(true);
                     label.setMaxWidth(400);
                     label.setPadding(new Insets(8, 12, 8, 12));
-                    label.setStyle("-fx-background-color: #0F2A1D; -fx-text-fill: #E3EED4; " +
-                            "-fx-background-radius: 16 16 16 4; -fx-font-size: 13px;");
+                    label.setStyle("-fx-background-color: #0F2A1D; -fx-text-fill: #E3EED4; -fx-background-radius: 16 16 16 4; -fx-font-size: 13px;");
                     conteneur.getChildren().add(label);
 
-                    // Sauvegarder dans la Map de cet expéditeur
                     discussions.computeIfAbsent(expediteur, k -> new ArrayList<>()).add(conteneur);
 
-                    // Si on est déjà en train de discuter avec cet expéditeur → afficher directement
                     if (expediteur.equals(destinataire)) {
                         messagesBox.getChildren().add(conteneur);
-                    }
-                    // Sinon mettre en évidence dans la liste pour signaler un nouveau message
-                    else {
+                    } else {
                         onlineUsersList.refresh();
-                        // TODO : ajouter une notification visuelle sur le nom de l'expéditeur
                     }
                 });
             }
@@ -184,16 +174,17 @@ public class ChatController {
         });
 
         boolean connecte = client.connect(password);
-        if (!connecte) {
-            afficherErreur("Impossible de se connecter au serveur.");
-        } else {
+        if (connecte) {
             Platform.runLater(() -> {
-                headerLabel.setText("Connecté : " + username + " — sélectionne un utilisateur");
-                headerLabel.getScene().getWindow().setOnCloseRequest(event -> {
-                    if (client != null) client.disconnect();
-                });
+                if (headerLabel.getScene() != null) {
+                    headerLabel.setText("Connecté : " + username + " — sélectionne un utilisateur");
+                    headerLabel.getScene().getWindow().setOnCloseRequest(e -> {
+                        if (client != null) client.disconnect();
+                    });
+                }
             });
         }
+        return connecte;
     }
 
     @FXML
@@ -239,7 +230,7 @@ public class ChatController {
     }
 
     private void afficherErreur(String texte) {
-        Label label = new Label(" " + texte);
+        Label label = new Label("⚠️ " + texte);
         label.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
         messagesBox.getChildren().add(label);
     }
