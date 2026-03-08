@@ -11,10 +11,8 @@ import java.util.Date;
 
 public class Launcher {
     public static void main(String[] args) {
-
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("PERSISTENCE");
         EntityManager em = emf.createEntityManager();
-
         Application.launch(HelloApplication.class, args);
         System.out.println("✅ Hibernate connecté à la base !");
 

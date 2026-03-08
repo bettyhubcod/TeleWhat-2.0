@@ -32,6 +32,12 @@ public class UserRepository {
             return null;
         }
     }
+    public List<String> findAllUsernames() {
+        return entityManager.createQuery(
+                "SELECT u.username FROM User u",
+                String.class
+        ).getResultList();
+    }
 
     public void save(User user) {
         EntityTransaction transaction = entityManager.getTransaction();

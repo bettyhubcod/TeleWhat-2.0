@@ -35,5 +35,11 @@ public class UserService {
         return user != null && user.getStatut() == Status.ONLINE;
     }
 
+public List<String> getTousLesUsers() {
+    return userRepository.findAllUsernames();
+}
+
+
+
 
 }

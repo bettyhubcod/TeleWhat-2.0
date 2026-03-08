@@ -20,10 +20,13 @@ public class Client {
     private ObjectInputStream in;
     private String username;
     private boolean connected = false;
+    private boolean onlineReceived = false;
     private MessageListener messageListener;
 
     public interface MessageListener {
         void onMessageReceived(Message message);
+        void onUsersListReceived(List<String> connectes);
+        void onOfflineUsersListReceived(List<String> offline);
         void onConnectionLost();
     }
 
@@ -32,52 +35,126 @@ public class Client {
         this.messageListener = listener;
     }
 
-    // ============================================================
-    // MAIN — pour tester sans JavaFX
-    // ============================================================
     public static void main(String[] args) throws InterruptedException {
 
-        Client client = new Client("oumou", new MessageListener() {
+        System.out.println("═══════════════════════════════════════");
+        System.out.println("         TEST TOUTES LES RÈGLES        ");
+        System.out.println("═══════════════════════════════════════");
+
+        System.out.println("\n🔵 TEST RG3 : Double connexion");
+        Client sidy1 = new Client("sidy ndiaye", new MessageListener() {
             @Override
             public void onMessageReceived(Message message) {
-                System.out.println("📩 Message reçu de " + message.getSender()
-                        + " : " + message.getContenue());
+                System.out.println("📩 sidy reçoit : " + message.getContenue());
             }
-
+            @Override
+            public void onUsersListReceived(List<String> connectes) {
+                System.out.println("👥 Users connectés : " + connectes);
+            }
+            @Override
+            public void onOfflineUsersListReceived(List<String> offline) {
+                System.out.println("⚫ Users offline : " + offline);
+            }
             @Override
             public void onConnectionLost() {
-                System.out.println("❌ Connexion perdue !");
+                System.out.println("❌ sidy : connexion perdue !");
             }
         });
+        sidy1.connect("passer");
 
-        boolean connecte = client.connect("password123");
+        Thread.sleep(500);
 
-        if (connecte) {
-            System.out.println("✅ Connecté avec succès !");
+        Client sidy2 = new Client("sidy ndiaye", new MessageListener() {
+            @Override
+            public void onMessageReceived(Message message) {}
+            @Override
+            public void onUsersListReceived(List<String> connectes) {}
+            @Override
+            public void onOfflineUsersListReceived(List<String> offline) {}
+            @Override
+            public void onConnectionLost() {}
+        });
+        sidy2.connect("passer");
 
-            // Envoyer un message à betty
-            Message msg = new Message();
-            msg.setSender("oumou");
-            msg.setReceveur("betty");
-            msg.setContenue("salut betty !");
-            msg.setDateEnvoie(new Date());
-            msg.setStatut(StatutMessage.ENVOYER);
-            client.sendMessage(msg);
+        Thread.sleep(500);
 
-            System.out.println("📨 Message envoyé !");
+        System.out.println("\n🔵 TEST RG6 : Message à user OFFLINE");
+        Message msgOffline = new Message();
+        msgOffline.setSender("sidy ndiaye");
+        msgOffline.setReceveur("abdoulaye mathurin");
+        msgOffline.setContenue("Salut, tu es offline mais tu recevras ce message !");
+        msgOffline.setDateEnvoie(new Date());
+        msgOffline.setStatut(StatutMessage.ENVOYER);
+        sidy1.sendMessage(msgOffline);
 
-            // Rester connecté pour recevoir des réponses
-            Thread.sleep(10000);
+        Thread.sleep(500);
 
-            client.disconnect();
-        } else {
-            System.out.println("❌ Échec de la connexion !");
-        }
+        System.out.println("\n🔵 TEST RG7 : Message vide");
+        Message msgVide = new Message();
+        msgVide.setSender("sidy ndiaye");
+        msgVide.setReceveur("abdoulaye mathurin");
+        msgVide.setContenue("");
+        msgVide.setDateEnvoie(new Date());
+        msgVide.setStatut(StatutMessage.ENVOYER);
+        sidy1.sendMessage(msgVide);
+
+        Thread.sleep(500);
+
+        System.out.println("\n🔵 TEST RG7 : Message trop long");
+        Message msgLong = new Message();
+        msgLong.setSender("sidy ndiaye");
+        msgLong.setReceveur("abdoulaye mathurin");
+        msgLong.setContenue("A".repeat(1001));
+        msgLong.setDateEnvoie(new Date());
+        msgLong.setStatut(StatutMessage.ENVOYER);
+        sidy1.sendMessage(msgLong);
+
+        Thread.sleep(500);
+
+        System.out.println("\n🔵 TEST RG5 : Destinataire inexistant");
+        Message msgInconnu = new Message();
+        msgInconnu.setSender("sidy ndiaye");
+        msgInconnu.setReceveur("userinconnu123");
+        msgInconnu.setContenue("Ce message ne devrait pas passer");
+        msgInconnu.setDateEnvoie(new Date());
+        msgInconnu.setStatut(StatutMessage.ENVOYER);
+        sidy1.sendMessage(msgInconnu);
+
+        Thread.sleep(500);
+
+        System.out.println("\n🔵 TEST RG6 : abdou se connecte → reçoit messages en attente");
+        Client abdou = new Client("abdoulaye mathurin", new MessageListener() {
+            @Override
+            public void onMessageReceived(Message message) {
+                System.out.println("📩 abdou reçoit de "
+                        + message.getSender() + " : " + message.getContenue());
+            }
+            @Override
+            public void onUsersListReceived(List<String> connectes) {
+                System.out.println("👥 Users connectés : " + connectes);
+            }
+            @Override
+            public void onOfflineUsersListReceived(List<String> offline) {
+                System.out.println("⚫ Users offline : " + offline);
+            }
+            @Override
+            public void onConnectionLost() {
+                System.out.println("❌ abdou : connexion perdue !");
+            }
+        });
+        abdou.connect("passer");
+
+        Thread.sleep(2000);
+
+        System.out.println("\n🔵 TEST RG4 : Déconnexion");
+        sidy1.disconnect();
+        abdou.disconnect();
+
+        System.out.println("\n═══════════════════════════════════════");
+        System.out.println("         FIN DES TESTS                 ");
+        System.out.println("═══════════════════════════════════════");
     }
 
-    // ============================================================
-    // Connexion au serveur
-    // ============================================================
     public boolean connect(String password) {
         try {
             socket = new Socket(SERVER_HOST, SERVER_PORT);
@@ -105,31 +182,28 @@ public class Client {
         }
     }
 
-    // ============================================================
-    // Thread d'écoute des messages entrants
-    // ============================================================
     private void startListenerThread() {
         Thread listenerThread = new Thread(() -> {
             while (connected) {
                 try {
                     Object received = in.readObject();
 
-                    // Cas 1 : c'est un message
                     if (received instanceof Message message) {
                         if (messageListener != null) {
                             messageListener.onMessageReceived(message);
                         }
-                    }
-
-                    // Cas 2 : c'est la liste des connectés (Day 3)
-                    else if (received instanceof List) {
-                        List<String> connectes = (List<String>) received;
-                        System.out.println("👥 Users connectés : " + connectes);
-                        // Plus tard → afficher dans JavaFX
-                    }
-
-                    // Cas 3 : c'est une info ou erreur du serveur
-                    else if (received instanceof String) {
+                    } else if (received instanceof List) {
+                        List<String> liste = (List<String>) received;
+                        if (messageListener != null) {
+                            if (!onlineReceived) {
+                                messageListener.onUsersListReceived(liste);
+                                onlineReceived = true;
+                            } else {
+                                messageListener.onOfflineUsersListReceived(liste);
+                                onlineReceived = false;
+                            }
+                        }
+                    } else if (received instanceof String) {
                         System.out.println("[SERVEUR] " + received);
                     }
 
@@ -155,28 +229,22 @@ public class Client {
         listenerThread.start();
     }
 
-    // ============================================================
-    // Envoyer un message
-    // ============================================================
     public void sendMessage(Message message) {
         if (!connected) {
-            System.err.println("[CLIENT] Impossible d'envoyer : vous n'êtes pas connecté.");
+            System.err.println("[CLIENT] Impossible d'envoyer : \n vous n'êtes pas connecté.");
             return;
         }
         try {
             out.writeObject(message);
             out.flush();
-            System.out.println("[CLIENT] Message envoyé à : " + message.getReceveur());
+            System.out.println("[CLIENT] Message envoyé à :\n " + message.getReceveur());
         } catch (IOException e) {
             connected = false;
-            System.err.println("[CLIENT] Erreur d'envoi : " + e.getMessage());
+            System.err.println("[CLIENT] Erreur d'envoi :\n " + e.getMessage());
             if (messageListener != null) messageListener.onConnectionLost();
         }
     }
 
-    // ============================================================
-    // Déconnexion
-    // ============================================================
     public void disconnect() {
         connected = false;
         try {

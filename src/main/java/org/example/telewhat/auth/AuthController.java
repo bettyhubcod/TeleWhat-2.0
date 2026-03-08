@@ -18,10 +18,12 @@ import org.example.telewhat.utils.JPAUtils;
 import org.example.telewhat.utils.JpaUtil;
 import org.mindrot.jbcrypt.BCrypt;
 import javafx.scene.input.MouseEvent;
-
 import java.io.IOException;
-
-
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import java.io.IOException;
+import org.example.telewhat.ChatController;
 public class AuthController {
 
     private AuthService authService;
@@ -38,7 +40,6 @@ public class AuthController {
     @FXML private TextField idPasswordVisible;
     @FXML private Button btn_login;
     @FXML private Button btn_register;
-
 
 
     @FXML
@@ -135,7 +136,6 @@ public class AuthController {
                         "-fx-text-fill: white;"
         );
     }
-
     @FXML
     void loginAction(ActionEvent event) {
         String username = idUsername.getText();
@@ -150,6 +150,32 @@ public class AuthController {
         if (success) {
             statusLabel.setText("Connexion réussie !");
             statusLabel.setStyle("-fx-text-fill: white; -fx-font-size: 12px;");
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/telewhat/chat-view.fxml"));
+                Scene scene = new Scene(loader.load(), 900, 600);
+
+                ChatController chatController = loader.getController();
+                chatController.setUsername(username);
+
+                // Tester la connexion au serveur AVANT d'ouvrir la fenêtre
+                boolean connecte = chatController.testerConnexion(password);
+                if (!connecte) {
+                    statusLabel.setText("Utilisateur deja connecte ou serveur innaccessible !");
+                    statusLabel.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+                }
+
+                Stage chatStage = new Stage();
+                chatStage.setTitle("TeleWhat - " + username);
+                chatStage.setScene(scene);
+                chatStage.setResizable(false);
+                chatStage.show();
+
+                idUsername.clear();
+                idPassword.clear();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
             statusLabel.setText("Nom d'utilisateur ou mot de passe incorrect !");
             statusLabel.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
