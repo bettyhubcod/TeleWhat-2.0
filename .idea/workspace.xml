@@ -5,19 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0a5b611a-7280-46f8-b323-7496a38d4cfb" name="Changes" comment="logique connection">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/telewhat/ChatController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/images/bg-green.jpeg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/org/example/telewhat/chat-view.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/telewhat/HelloApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/telewhat/HelloApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/telewhat/Launcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/telewhat/Launcher.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/telewhat/auth/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/telewhat/auth/AuthController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/telewhat/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/telewhat/client/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/telewhat/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/telewhat/repository/UserRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/telewhat/server/ClientHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/telewhat/server/ClientHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/telewhat/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/telewhat/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/telewhat/server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/telewhat/server/Server.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/telewhat/inscription-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/telewhat/inscription-view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/telewhat/login-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/telewhat/login-view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/telewhat/HelloApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/telewhat/HelloApplication.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/org/example/telewhat/auth/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/telewhat/auth/AuthController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/telewhat/client/Client$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/telewhat/client/Client$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/telewhat/client/Client$MessageListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/telewhat/client/Client$MessageListener.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/telewhat/client/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/telewhat/client/Client.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/telewhat/entity/Message.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/telewhat/entity/Message.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/telewhat/login-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/telewhat/login-view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/telewhat/server/ClientHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/telewhat/server/ClientHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/telewhat/server/Server.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/telewhat/server/Server.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/telewhat/service/MessageService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/telewhat/service/MessageService.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,7 +71,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "Merging main",
+    "git-widget-placeholder": "main",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/User/IdeaProjects/TeleWhat2.0/src/main/resources/images",
@@ -87,6 +91,7 @@
       <recent name="C:\Users\User\IdeaProjects\TeleWhat2.0\src\main\resources" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\User\IdeaProjects\TeleWhat2.0\src\main\resources\images" />
       <recent name="C:\Users\User\IdeaProjects\TeleWhat2.0\src\main\resources" />
     </key>
   </component>

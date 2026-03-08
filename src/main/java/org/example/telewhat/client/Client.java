@@ -13,7 +13,7 @@ import java.util.List;
 
 public class Client {
 
-    private static final String SERVER_HOST = "192.168.1.5";
+    private static final String SERVER_HOST = "localhost";
     private static final int SERVER_PORT = 8080;
 
     private Socket socket;

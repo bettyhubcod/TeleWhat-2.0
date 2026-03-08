@@ -162,6 +162,7 @@ public class AuthController {
                 if (!connecte) {
                     statusLabel.setText("Utilisateur deja connecte ou serveur innaccessible !");
                     statusLabel.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+                    return;
                 }
 
                 Stage chatStage = new Stage();
