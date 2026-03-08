@@ -1,5 +1,6 @@
 package org.example.telewhat.client;
 
+import org.example.telewhat.entity.LectureNotification;
 import org.example.telewhat.entity.Message;
 import org.example.telewhat.entity.User;
 import org.example.telewhat.enumeration.StatutMessage;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public class Client {
 
-    private static final String SERVER_HOST = "localhost";
+    private static final String SERVER_HOST = "192.168.1.5";
     private static final int SERVER_PORT = 8080;
 
     private Socket socket;
@@ -27,6 +28,7 @@ public class Client {
         void onMessageReceived(Message message);
         void onUsersListReceived(List<String> connectes);
         void onOfflineUsersListReceived(List<String> offline);
+        void onLectureNotificationReceived(String reader);
         void onConnectionLost();
     }
 
@@ -56,6 +58,10 @@ public class Client {
                 System.out.println("⚫ Users offline : " + offline);
             }
             @Override
+            public void onLectureNotificationReceived(String reader) {
+                System.out.println("👁️ sidy : messages lus par " + reader);
+            }
+            @Override
             public void onConnectionLost() {
                 System.out.println("❌ sidy : connexion perdue !");
             }
@@ -71,6 +77,8 @@ public class Client {
             public void onUsersListReceived(List<String> connectes) {}
             @Override
             public void onOfflineUsersListReceived(List<String> offline) {}
+            @Override
+            public void onLectureNotificationReceived(String reader) {}
             @Override
             public void onConnectionLost() {}
         });
@@ -136,6 +144,10 @@ public class Client {
             @Override
             public void onOfflineUsersListReceived(List<String> offline) {
                 System.out.println("⚫ Users offline : " + offline);
+            }
+            @Override
+            public void onLectureNotificationReceived(String reader) {
+                System.out.println("👁️ abdou : messages lus par " + reader);
             }
             @Override
             public void onConnectionLost() {
@@ -205,6 +217,11 @@ public class Client {
                         }
                     } else if (received instanceof String) {
                         System.out.println("[SERVEUR] " + received);
+                    } else if (received instanceof LectureNotification) {
+                        LectureNotification notification = (LectureNotification) received;
+                        if (messageListener != null) {
+                            messageListener.onLectureNotificationReceived(notification.getReader());
+                        }
                     }
 
                 } catch (SocketException e) {
@@ -242,6 +259,17 @@ public class Client {
             connected = false;
             System.err.println("[CLIENT] Erreur d'envoi :\n " + e.getMessage());
             if (messageListener != null) messageListener.onConnectionLost();
+        }
+    }
+
+    public void envoyerLectureNotification(String destinataire) {
+        if (!connected) return;
+        try {
+            LectureNotification notification = new LectureNotification(username, destinataire);
+            out.writeObject(notification);
+            out.flush();
+        } catch (IOException e) {
+            System.err.println("[CLIENT] Erreur envoi notification lecture : " + e.getMessage());
         }
     }
 

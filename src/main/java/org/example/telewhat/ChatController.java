@@ -13,11 +13,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import org.example.telewhat.client.Client;
 import org.example.telewhat.entity.Message;
 import org.example.telewhat.enumeration.StatutMessage;
 import org.example.telewhat.service.MessageService;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -96,15 +98,16 @@ public class ChatController {
         messagesBox.getChildren().clear();
         headerLabel.setText("Connecté : " + username + " — discussion " + destinataire);
 
-        // Toujours recharger depuis la BD
+        messageService.marquerCommeLus(destinataire, username);
+
+        if (client != null) {
+            client.envoyerLectureNotification(destinataire);
+        }
+
         List<Message> historique = messageService.getHistorique(username, destinataire);
         for (Message msg : historique) {
             boolean estMoi = msg.getSender().equals(username);
-            afficherMessage(msg.getSender() + " :\n" + msg.getContenue(), estMoi);
-        }
-
-        if (discussions.containsKey(destinataire)) {
-            discussions.remove(destinataire);
+            afficherMessageAvecStatut(msg, estMoi);
         }
 
         discussions.put(destinataire, new ArrayList<>(messagesBox.getChildren()));
@@ -120,24 +123,12 @@ public class ChatController {
             public void onMessageReceived(Message message) {
                 Platform.runLater(() -> {
                     String expediteur = message.getSender();
-                    String texte = expediteur + " :\n" + message.getContenue();
-
-                    HBox conteneur = new HBox();
-                    conteneur.setPadding(new Insets(4, 8, 4, 8));
-                    conteneur.setAlignment(Pos.CENTER_LEFT);
-
-                    Label label = new Label(texte);
-                    label.setWrapText(true);
-                    label.setMaxWidth(400);
-                    label.setPadding(new Insets(8, 12, 8, 12));
-                    label.setStyle("-fx-background-color: #0F2A1D; -fx-text-fill: #E3EED4; -fx-background-radius: 16 16 16 4; -fx-font-size: 13px;");
-                    conteneur.getChildren().add(label);
-
-                    discussions.computeIfAbsent(expediteur, k -> new ArrayList<>()).add(conteneur);
-
                     if (expediteur.equals(destinataire)) {
-                        messagesBox.getChildren().add(conteneur);
+                        afficherMessageAvecStatut(message, false);
+                        messageService.marquerCommeLus(expediteur, username);
+                        client.envoyerLectureNotification(expediteur);
                     } else {
+                        discussions.computeIfAbsent(expediteur, k -> new ArrayList<>());
                         onlineUsersList.refresh();
                     }
                 });
@@ -163,6 +154,21 @@ public class ChatController {
                         if (!user.equals(username)) {
                             offlineUsersList.getItems().add(user);
                         }
+                    }
+                });
+            }
+
+            @Override
+            public void onLectureNotificationReceived(String reader) {
+                Platform.runLater(() -> {
+                    if (reader.equals(destinataire)) {
+                        List<Message> historique = messageService.getHistorique(username, destinataire);
+                        messagesBox.getChildren().clear();
+                        for (Message msg : historique) {
+                            boolean estMoi = msg.getSender().equals(username);
+                            afficherMessageAvecStatut(msg, estMoi);
+                        }
+                        discussions.put(destinataire, new ArrayList<>(messagesBox.getChildren()));
                     }
                 });
             }
@@ -196,8 +202,6 @@ public class ChatController {
         String texte = messageInput.getText();
         if (texte == null || texte.isEmpty()) return;
 
-        afficherMessage(username + " :\n" + texte, true);
-
         Message message = new Message();
         message.setSender(username);
         message.setReceveur(destinataire);
@@ -206,26 +210,113 @@ public class ChatController {
         message.setStatut(StatutMessage.ENVOYER);
 
         client.sendMessage(message);
+        afficherMessageAvecStatut(message, true);
         messageInput.clear();
     }
 
-    private void afficherMessage(String texte, boolean estMoi) {
+    @FXML
+    public void choisirPhoto() {
+        if (destinataire == null) {
+            afficherErreur("Sélectionne un utilisateur d'abord !");
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choisir une photo");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif")
+        );
+
+        File fichier = fileChooser.showOpenDialog(messageInput.getScene().getWindow());
+        if (fichier != null) {
+            if (fichier.length() > 5 * 1024 * 1024) {
+                afficherErreur("Image trop grande ! Max 5MB.");
+                return;
+            }
+
+            String cheminImage = "IMG:" + fichier.toURI().toString();
+
+            Message message = new Message();
+            message.setSender(username);
+            message.setReceveur(destinataire);
+            message.setContenue(cheminImage);
+            message.setDateEnvoie(new Date());
+            message.setStatut(StatutMessage.ENVOYER);
+
+            client.sendMessage(message);
+            afficherMessageAvecStatut(message, true);
+        }
+    }
+
+    private void afficherMessageAvecStatut(Message message, boolean estMoi) {
         HBox conteneur = new HBox();
         conteneur.setPadding(new Insets(4, 8, 4, 8));
         conteneur.setAlignment(estMoi ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
 
-        Label label = new Label(texte);
-        label.setWrapText(true);
-        label.setMaxWidth(400);
-        label.setPadding(new Insets(8, 12, 8, 12));
+        VBox bulle = new VBox(0);
+        bulle.setMaxWidth(400);
 
         if (estMoi) {
-            label.setStyle("-fx-background-color: #375534; -fx-text-fill: #E3EED4; -fx-background-radius: 16 16 4 16; -fx-font-size: 13px;");
+            bulle.setStyle("-fx-background-color: #375534; -fx-background-radius: 16 16 4 16;");
         } else {
-            label.setStyle("-fx-background-color: #0F2A1D; -fx-text-fill: #E3EED4; -fx-background-radius: 16 16 16 4; -fx-font-size: 13px;");
+            bulle.setStyle("-fx-background-color: #0F2A1D; -fx-background-radius: 16 16 16 4;");
         }
 
-        conteneur.getChildren().add(label);
+        // Détecter si c'est une image
+        boolean estImage = message.getContenue() != null
+                && message.getContenue().startsWith("IMG:");
+
+        if (estImage) {
+            String uri = message.getContenue().substring(4);
+            try {
+                Image img = new Image(uri, 250, 200, true, true);
+                ImageView imgView = new ImageView(img);
+                imgView.setFitWidth(250);
+                imgView.setPreserveRatio(true);
+                HBox imgBox = new HBox(imgView);
+                imgBox.setPadding(new Insets(6, 6, 2, 6));
+                bulle.getChildren().add(imgBox);
+            } catch (Exception e) {
+                Label err = new Label("🖼 Image non disponible");
+                err.setStyle("-fx-text-fill: #AEC3B0; -fx-padding: 8 12 8 12;");
+                bulle.getChildren().add(err);
+            }
+        } else {
+            Label labelTexte = new Label(message.getSender() + " :\n" + message.getContenue());
+            labelTexte.setWrapText(true);
+            labelTexte.setMaxWidth(380);
+            labelTexte.setPadding(new Insets(8, 12, 2, 12));
+            labelTexte.setStyle("-fx-background-color: transparent; -fx-text-fill: #E3EED4; -fx-font-size: 13px;");
+            bulle.getChildren().add(labelTexte);
+        }
+
+        // Statut ✓ uniquement pour mes messages
+        if (estMoi) {
+            HBox statutBox = new HBox();
+            statutBox.setAlignment(Pos.CENTER_RIGHT);
+            statutBox.setPadding(new Insets(0, 8, 4, 0));
+
+            Label labelStatut = new Label();
+            switch (message.getStatut()) {
+                case ENVOYER -> {
+                    labelStatut.setText("\u2713");
+                    labelStatut.setStyle("-fx-text-fill: #AEC3B0; -fx-font-size: 12px; -fx-font-weight: bold;");
+                }
+                case RECU -> {
+                    labelStatut.setText("\u2713\u2713");
+                    labelStatut.setStyle("-fx-text-fill: #AEC3B0; -fx-font-size: 12px; -fx-font-weight: bold;");
+                }
+                case LU -> {
+                    labelStatut.setText("\u2713\u2713");
+                    labelStatut.setStyle("-fx-text-fill: #4FC3F7; -fx-font-size: 12px; -fx-font-weight: bold;");
+                }
+            }
+
+            statutBox.getChildren().add(labelStatut);
+            bulle.getChildren().add(statutBox);
+        }
+
+        conteneur.getChildren().add(bulle);
         messagesBox.getChildren().add(conteneur);
     }
 
