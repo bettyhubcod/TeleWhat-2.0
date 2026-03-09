@@ -37,21 +37,5 @@ public class AuthService {
         return valid;
     }
 
-    public void registerUser(String username, String password) {
-        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(hashedPassword);
-
-        EntityTransaction tx = em.getTransaction();
-        try {
-            tx.begin();
-            em.persist(user);
-            tx.commit();
-        } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
-            throw e;
-        }
-    }
 }

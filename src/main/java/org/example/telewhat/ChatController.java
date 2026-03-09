@@ -54,7 +54,7 @@ public class ChatController {
                     setText(null);
                     setStyle("-fx-background-color: transparent;");
                 } else {
-                    setText("🟢  " + item);
+                    setText(" " + item);
                     setStyle("-fx-text-fill: #E3EED4; -fx-font-size: 13px; -fx-font-weight: bold; -fx-padding: 8 0 8 4; -fx-background-color: transparent;");
                 }
             }
@@ -68,7 +68,7 @@ public class ChatController {
                     setText(null);
                     setStyle("-fx-background-color: transparent;");
                 } else {
-                    setText("⚫  " + item);
+                    setText("   " + item);
                     setStyle("-fx-text-fill: #AEC3B0; -fx-font-size: 13px; -fx-font-weight: bold; -fx-padding: 8 0 8 4; -fx-background-color: transparent;");
                 }
             }

@@ -6,7 +6,6 @@ import jakarta.persistence.Persistence;
 
 public class JpaUtil {
 
-    // Le nom "PERSISTENCE" doit correspondre à persistence.xml
     private static final EntityManagerFactory emf =
             Persistence.createEntityManagerFactory("PERSISTENCE");
 

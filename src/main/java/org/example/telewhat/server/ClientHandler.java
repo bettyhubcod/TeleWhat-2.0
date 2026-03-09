@@ -34,7 +34,7 @@ public class ClientHandler implements Runnable {
             oos = new ObjectOutputStream(socket.getOutputStream());
             ois = new ObjectInputStream(socket.getInputStream());
 
-            System.out.println("✅ ClientHandler démarré pour : " + socket.getInetAddress());
+            System.out.println(" ClientHandler démarré pour : " + socket.getInetAddress());
 
             while (true) {
                 Object objetRecu = ois.readObject();
@@ -57,12 +57,12 @@ public class ClientHandler implements Runnable {
             }
 
         } catch (IOException e) {
-            System.out.println("⚠️ Connexion perdue avec : " +
+            System.out.println("Connexion perdue avec : " +
                     (userConnecte != null ? userConnecte.getUsername() : socket.getInetAddress()));
             gererDeconnexion();
 
         } catch (ClassNotFoundException e) {
-            System.out.println("❌ Objet inconnu reçu : " + e.getMessage());
+            System.out.println("Objet inconnu reçu : " + e.getMessage());
 
         } finally {
             fermerRessources();
@@ -70,12 +70,12 @@ public class ClientHandler implements Runnable {
     }
 
     private void gererConnexion(User user) throws IOException {
-        System.out.println("🔑 Tentative de connexion : " + user.getUsername());
+        System.out.println("Tentative de connexion : " + user.getUsername());
 
         // RG3 : un seul utilisateur connecté à la fois
         if (Server.clientsConnectes.containsKey(user.getUsername())) {
             oos.writeObject("ERREUR: Utilisateur déjà connecté");
-            System.out.println("❌ " + user.getUsername() + " déjà connecté");
+            System.out.println(" " + user.getUsername() + " déjà connecté");
             return;
         }
 
@@ -83,7 +83,7 @@ public class ClientHandler implements Runnable {
         boolean authentifie = authService.login(user.getUsername(), user.getPassword());
         if (!authentifie) {
             oos.writeObject("ERREUR: Identifiants incorrects");
-            System.out.println("❌ Échec authentification : " + user.getUsername());
+            System.out.println(" Échec authentification : " + user.getUsername());
             return;
         }
 
@@ -92,7 +92,7 @@ public class ClientHandler implements Runnable {
         Server.clientsConnectes.put(user.getUsername(), this);
 
         // RG12 : journaliser
-        System.out.println("✅ " + user.getUsername() + " connecté. Total : "
+        System.out.println(" " + user.getUsername() + " connecté. Total : "
                 + Server.clientsConnectes.size());
 
         // Confirmer la connexion
@@ -155,7 +155,7 @@ public class ClientHandler implements Runnable {
         }
 
         // RG12 : journaliser
-        System.out.println("📨 " + message.getSender() + " → " + message.getReceveur());
+        System.out.println("" + message.getSender() + " → " + message.getReceveur());
 
         // Chercher le destinataire dans l'annuaire
         ClientHandler destinataireHandler = Server.clientsConnectes.get(message.getReceveur());
@@ -165,7 +165,7 @@ public class ClientHandler implements Runnable {
             messageService.sauvegarder(message);
             destinataireHandler.envoyerObjet(message);
             messageService.mettreAJourStatut(message.getId(), StatutMessage.RECU);
-            System.out.println("✅ Message livré à " + message.getReceveur());
+            System.out.println(" Message livré à " + message.getReceveur());
         }
 
         // RG6 : destinataire hors ligne → sauvegarder
@@ -185,14 +185,14 @@ public class ClientHandler implements Runnable {
             userService.deconnecter(userConnecte.getUsername());
 
             // RG12 : journaliser
-            System.out.println("🔴 " + userConnecte.getUsername()
+            System.out.println(" " + userConnecte.getUsername()
                     + " déconnecté. Total : " + Server.clientsConnectes.size());
 
             // Mettre à jour la liste des connectés pour tous
             try {
                 envoyerListeConnectes();
             } catch (IOException e) {
-                System.out.println("❌ Erreur envoi liste connectés : " + e.getMessage());
+                System.out.println(" Erreur envoi liste connectés : " + e.getMessage());
             }
 
             userConnecte = null;
@@ -210,7 +210,7 @@ public class ClientHandler implements Runnable {
             if (oos != null) oos.close();
             if (socket != null) socket.close();
         } catch (IOException e) {
-            System.out.println("❌ Erreur fermeture ressources : " + e.getMessage());
+            System.out.println(" Erreur fermeture ressources : " + e.getMessage());
         }
     }
     private void gererLectureNotification(LectureNotification notification) throws IOException {

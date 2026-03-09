@@ -13,7 +13,6 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.telewhat.ChatController">
 
-    <!-- SIDEBAR GAUCHE -->
     <left>
         <VBox prefHeight="600.0" prefWidth="280.0" style="-fx-background-color: #0F2A1D; -fx-padding: 16; -fx-spacing: 8;" BorderPane.alignment="CENTER">
             <children>
@@ -27,19 +26,18 @@
         </VBox>
     </left>
 
-    <!-- ZONE CHAT -->
     <center>
         <BorderPane prefHeight="600.0" prefWidth="620.0" BorderPane.alignment="CENTER">
             <center>
                 <StackPane>
 
-                    <!-- FOND D'ECRAN -->
+
                     <ImageView fx:id="backgroundImage" fitHeight="600" fitWidth="620" preserveRatio="false" />
 
-                    <!-- CONTENU PAR DESSUS LE FOND -->
+
                     <BorderPane>
 
-                        <!-- HEADER -->
+
                         <top>
                             <HBox prefHeight="60.0" prefWidth="620.0" style="-fx-background-color: #0F2A1D; -fx-padding: 10 16; -fx-alignment: center-left; -fx-spacing: 12;" BorderPane.alignment="CENTER">
                                 <children>
@@ -53,7 +51,7 @@
                             </HBox>
                         </top>
 
-                        <!-- MESSAGES -->
+
                         <center>
                             <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" BorderPane.alignment="CENTER">
                                 <content>
@@ -62,11 +60,11 @@
                             </ScrollPane>
                         </center>
 
-                        <!-- INPUT -->
+
                         <bottom>
                             <HBox prefHeight="55.0" prefWidth="620.0" style="-fx-background-color: #0F2A1D; -fx-padding: 10 16; -fx-spacing: 10; -fx-alignment: center;" BorderPane.alignment="CENTER">
                                 <children>
-                                    <!-- BOUTON PHOTO -->
+
                                     <Button fx:id="photoButton" onAction="#choisirPhoto" style="-fx-background-color: #375534; -fx-text-fill: #E3EED4; -fx-background-radius: 20; -fx-padding: 10 14; -fx-cursor: hand; -fx-font-size: 16px;" text="📎" />
                                     <TextField fx:id="messageInput" promptText="Écrire un message..." style="-fx-background-color: #375534; -fx-text-fill: #E3EED4; -fx-prompt-text-fill: #AEC3B0; -fx-background-radius: 20; -fx-padding: 10 16;" HBox.hgrow="ALWAYS" />
                                     <Button fx:id="sendButton" onAction="#sendMessage" style="-fx-background-color: #6B9071; -fx-text-fill: #E3EED4; -fx-background-radius: 20; -fx-padding: 10 16; -fx-cursor: hand;" text="➤" />
